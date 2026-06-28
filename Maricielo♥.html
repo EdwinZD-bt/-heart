@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Para Alguien Especial ✨</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&family=Montserrat:wght@300;400;600&family=Pacifico&family=Caveat:wght@700&family=Great+Vibes&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: #050510;
+            color: #ffffff;
+            font-family: 'Montserrat', sans-serif;
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        /* Fondo de Estrellas */
+        .stars-container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 1;
+        }
+
+        .star {
+            position: absolute;
+            background-color: #ffffff;
+            border-radius: 50%;
+            animation: twinkle linear infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+
+        /* Estilos para los Cometas */
+        .comet {
+            position: absolute;
+            height: 2px;
+            background: linear-gradient(-45deg, #fff, rgba(0, 0, 255, 0));
+            filter: drop-shadow(0 0 6px #fff);
+            animation: cometTail 3s ease-in-out infinite;
+            opacity: 0;
+            z-index: 1;
+        }
+
+        @keyframes cometTail {
+            0% {
+                transform: translateX(0) translateY(0) rotate(-45deg) scaleX(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+                transform: translateX(0) translateY(0) rotate(-45deg) scaleX(1);
+            }
+            100% {
+                transform: translateX(-1000px) translateY(1000px) rotate(-45deg) scaleX(1);
+                opacity: 0;
+            }
+        }
+
+        /* Contenedor Principal */
+        .container {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            width: 100%;
+            max-width: 600px;
+            padding: 20px;
+        }
+
+        /* Botón de Inicio */
+        .start-btn {
+            background: linear-gradient(45deg, #ff4b72, #ff7597);
+            color: white;
+            border: none;
+            padding: 15px 35px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 30px;
+            cursor: pointer;
+            box-shadow: 0 5px 20px rgba(255, 75, 114, 0.4);
+            transition: transform 0.3s, box-shadow 0.3s;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .start-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(255, 75, 114, 0.6);
+        }
+
+        /* Letras de la Canción */
+        .lyrics-box {
+            display: none;
+            min-height: 180px;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            width: 100%;
+        }
+
+        .lyric-line {
+            font-size: 2.2rem;
+            color: #ffb3c6;
+            text-shadow: 0 0 15px rgba(255, 179, 198, 0.6);
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+            line-height: 1.5;
+            display: inline-block;
+            position: relative;
+            width: 100%;
+            word-wrap: break-word;
+        }
+
+        .lyric-line.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Clases para fuentes variadas */
+        .font-default { font-family: 'Dancing Script', cursive; }
+        .font-pacifico { font-family: 'Pacifico', cursive; }
+        .font-caveat { font-family: 'Caveat', cursive; }
+        .font-great-vibes { font-family: 'Great Vibes', cursive; }
+
+        /* Corazones flotantes de las palabras */
+        .word-heart {
+            position: absolute;
+            color: #ff4b72;
+            font-size: 1rem;
+            pointer-events: none;
+            animation: heartOut 1.8s ease-out forwards;
+            opacity: 0;
+            z-index: 11;
+        }
+
+        @keyframes heartOut {
+            0% {
+                transform: translate(-50%, -50%) scale(0.5);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+                transform: translate(var(--dx), var(--dy)) scale(1.2);
+            }
+        }
+
+        /* Contenedor del reproductor invisible */
+        #player-container {
+            position: absolute;
+            top: -100px;
+            left: -100px;
+            width: 10px;
+            height: 10px;
+            overflow: hidden;
+            z-index: -100;
+        }
+
+        /* Corazones flotantes del fondo */
+        .heart {
+            position: absolute;
+            color: rgba(255, 75, 114, 0.3);
+            font-size: 1.5rem;
+            animation: floatUp 4s linear infinite;
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        @keyframes floatUp {
+            0% {
+                transform: translateY(105vh) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-10vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* ==========================================================
+           REGLAS RESPONSIVAS (@media) PARA CELULARES
+           ========================================================== */
+        @media (max-width: 768px) {
+            #intro h1 {
+                font-size: 2.3rem !important; /* Título de intro más pequeño */
+            }
+
+            #intro p {
+                font-size: 0.9rem !important;
+                padding: 0 10px;
+            }
+
+            .lyric-line {
+                font-size: 1.6rem; /* Reducción del tamaño de la letra de la canción */
+                padding: 0 15px;
+            }
+
+            /* Hacemos que las fuentes extra grandes no rompan el diseño en móvil */
+            .font-great-vibes {
+                font-size: 2rem; 
+            }
+
+            .font-caveat {
+                font-size: 1.9rem;
+            }
+
+            .word-heart {
+                font-size: 0.8rem; /* Corazones de palabras un poco más pequeños */
+            }
+
+            .heart {
+                font-size: 1.1rem; /* Corazones de fondo más sutiles */
+            }
+
+            /* Ajuste de trayectoria de cometas para pantallas angostas */
+            @keyframes cometTail {
+                0% {
+                    transform: translateX(0) translateY(0) rotate(-45deg) scaleX(0);
+                    opacity: 0;
+                }
+                10% {
+                    opacity: 1;
+                    transform: translateX(0) translateY(0) rotate(-45deg) scaleX(1);
+                }
+                100% {
+                    transform: translateX(-500px) translateY(500px) rotate(-45deg) scaleX(1);
+                    opacity: 0;
+                }
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="stars-container" id="stars"></div>
+    
+    <div id="player-container">
+        <div id="player"></div>
+    </div>
+
+    <div class="container">
+        <div id="intro">
+            <h1 style="font-family: 'Dancing Script', cursive; font-size: 3rem; margin-bottom: 20px; color: #ff7597;">Para ti...</h1>
+            <p style="font-weight: 300; margin-bottom: 30px; letter-spacing: 1px; color: #ddddff;">Enciende el volumen y presiona el botón</p>
+            <button class="start-btn" onclick="startExperience()">Abrir Dedicatoria ❤️</button>
+        </div>
+
+        <div class="lyrics-box" id="lyricsBox">
+            <div class="lyric-line" id="lyricText"></div>
+        </div>
+    </div>
+
+    <script>
+        var tag = document.createElement('script');
+        tag.src = "https://www.youtube.com/iframe_api";
+        var firstScriptTag = document.getElementsByTagName('script')[0];
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+        var player;
+        var playerReady = false;
+
+        function onYouTubeIframeAPIReady() {
+            player = new YT.Player('player', {
+                height: '100',
+                width: '100',
+                videoId: '-RL2aThdHY8',
+                playerVars: {
+                    'autoplay': 0,
+                    'controls': 0,
+                    'disablekb': 1,
+                    'fs': 0,
+                    'rel': 0,
+                    'modestbranding': 1,
+                    'origin': window.location.origin
+                },
+                events: {
+                    'onReady': onPlayerReady
+                }
+            });
+        }
+
+        function onPlayerReady(event) {
+            playerReady = true;
+            player.unMute();
+        }
+
+        const starsContainer = document.getElementById('stars');
+        const numStars = window.innerWidth < 768 ? 80 : 150; // Menos estrellas en móvil para mejor rendimiento
+        for (let i = 0; i < numStars; i++) {
+            const star = document.createElement('div');
+            star.classList.add('star');
+            star.style.width = `${Math.random() * 2.5}px`;
+            star.style.height = star.style.width;
+            star.style.top = `${Math.random() * 100}%`;
+            star.style.left = `${Math.random() * 100}%`;
+            star.style.animationDuration = `${Math.random() * 3 + 2}s`;
+            star.style.animationDelay = `${Math.random() * 2}s`;
+            starsContainer.appendChild(star);
+        }
+
+        function createComet() {
+            const comet = document.createElement('div');
+            comet.classList.add('comet');
+            comet.style.top = `${Math.random() * 40}%`;
+            comet.style.right = `${Math.random() * 20}%`;
+            comet.style.width = `${Math.random() * 100 + 50}px`;
+            document.body.appendChild(comet);
+            setTimeout(() => { comet.remove(); }, 3000); 
+        }
+
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.classList.add('heart');
+            heart.innerHTML = '❤️';
+            heart.style.left = `${Math.random() * 100}vw`;
+            heart.style.fontSize = window.innerWidth < 768 ? `${Math.random() * 0.8 + 0.8}rem` : `${Math.random() * 1.5 + 1}rem`;
+            heart.style.animationDuration = `${Math.random() * 3 + 3}s`;
+            document.body.appendChild(heart);
+            setTimeout(() => { heart.remove(); }, 6000);
+        }
+
+        function createHeartFromWord(element) {
+            const isMobile = window.innerWidth < 768;
+            const numHearts = isMobile ? 4 : 6; // Menos corazones en móvil para evitar sobrecargar la pantalla
+            const rect = element.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+
+            for (let i = 0; i < numHearts; i++) {
+                const heart = document.createElement('div');
+                heart.classList.add('word-heart');
+                heart.innerHTML = '❤️';
+                heart.style.left = `${centerX}px`;
+                heart.style.top = `${centerY}px`;
+
+                // Explosión un poco más contenida en celulares
+                const force = isMobile ? 140 : 250;
+                const dx = (Math.random() - 0.5) * force;
+                const dy = (Math.random() - 0.5) * force - (isMobile ? 20 : 50);
+                
+                heart.style.setProperty('--dx', `${dx}px`);
+                heart.style.setProperty('--dy', `${dy}px`);
+                heart.style.animationDelay = `${Math.random() * 0.2}s`;
+
+                document.body.appendChild(heart);
+                setTimeout(() => { heart.remove(); }, 2000);
+            }
+        }
+
+        const lyricsTimeline = [
+            { time: 11, text: "Hola, ¿qué tal?<br>¿Cómo tú estás?", font: "font-caveat" },
+            { time: 14, text: "No quisiera molestarte<br>pero tuve que llamarte", font: "font-default" },
+            { time: 21, text: "Sé que quizás no lo esperabas", font: "font-pacifico" },
+            { time: 24, text: "Pero tengo que confesarte<br>que me muero por besarte", font: "font-great-vibes", hearts: true },
+            { time: 30, text: "Me tienes loco y no lo puedo negar", font: "font-default" },
+            { time: 35, text: "Y cuando me miras<br>no sé cómo reaccionar", font: "font-caveat" },
+            { time: 41, text: "Cambiaste todo, no puedo ni pensar", font: "font-pacifico" },
+            { time: 45, text: "Me tuve que desahogar...<br>No vayas a cambiar", font: "font-default" },
+            { time: 51, text: "Me enamoré", font: "font-great-vibes", hearts: true },
+            { time: 54, text: "Sí, me enamoré", font: "font-great-vibes", hearts: true },
+            { time: 56, text: "Entre tantos corazones<br>en el tuyo me quedé", font: "font-default" },
+            { time: 62, text: "Y me enamoré", font: "font-pacifico", hearts: true },
+            { time: 64, text: "Sí, me enamoré", font: "font-pacifico", hearts: true },
+            { time: 67, text: "Y no pude evitarlo<br>por más que lo intenté", font: "font-default" },
+            { time: 73, text: "Me enamoré...", font: "font-great-vibes", hearts: true },
+            { time: 83, text: "Me enamoré... ❤️", font: "font-default", hearts: true },
+            { time: 94, text: "Sé que te cuesta confiar,<br>culpas tu pasado", font: "font-caveat" },
+            { time: 100, text: "No quieres volver a empezar", font: "font-default" },
+            { time: 103, text: "Por todo lo que has llorado...", font: "font-pacifico" },
+            { time: 105, text: "Pensando que todos son igual", font: "font-default" },
+            { time: 108, text: "No quieres perder tu tiempo,<br>no sé si me vas a ignorar", font: "font-caveat" },
+            { time: 113, text: "Por decirte lo que siento", font: "font-default" },
+            { time: 117, text: "Ya no voy a callarlo", font: "font-pacifico" },
+            { time: 121, text: "Si me permites, contigo me quedo", font: "font-great-vibes", hearts: true },
+            { time: 127, text: "Tengo que aceptarlo", font: "font-default" },
+            { time: 131, text: "Trato de no pensarte,<br>pero ya no puedo...", font: "font-caveat" },
+            { time: 137, text: "Me enamoré", font: "font-great-vibes", hearts: true },
+            { time: 139, text: "Sí, me enamoré", font: "font-great-vibes", hearts: true },
+            { time: 142, text: "Entre tantos corazones<br>en el tuyo me quedé", font: "font-default" },
+            { time: 147, text: "Y me enamoré", font: "font-pacifico", hearts: true },
+            { time: 149, text: "Sí, me enamoré", font: "font-pacifico", hearts: true },
+            { time: 152, text: "Y no pude evitarlo<br>por más que lo intenté", font: "font-default" },
+            { time: 158, text: "Imaginando que te tengo aquí...", font: "font-caveat" },
+            { time: 162, text: "Quisiera que digas que 'SÍ'", font: "font-great-vibes", hearts: true },
+            { time: 165, text: "¿Qué puedo hacer si siempre te extraño?", font: "font-default" },
+            { time: 170, text: "No sé en lo que me convertí...", font: "font-pacifico" },
+            { time: 173, text: "Pero cuando te vi,<br>siento que todo cambió", font: "font-default" },
+            { time: 180, text: "Estoy enamorado y no lo niego", font: "font-great-vibes", hearts: true },
+            { time: 187, text: "Si tú no estás, me siento ciego", font: "font-caveat" },
+            { time: 193, text: "Olvidarte ya no puedo", font: "font-default" },
+            { time: 197, text: "Tú tienes todo lo que quiero...", font: "font-great-vibes", hearts: true },
+            { time: 201, text: "Me enamoré", font: "font-pacifico", hearts: true },
+            { time: 203, text: "Sí, me enamoré...", font: "font-default", hearts: true },
+            { time: 211, text: "Y me enamoré", font: "font-great-vibes", hearts: true },
+            { time: 214, text: "Sí, me enamoré", font: "font-great-vibes", hearts: true },
+            { time: 216, text: "Y no pude evitarlo<br>por más que lo intenté... ✨", font: "font-default", hearts: true }
+        ];
+
+        function startExperience() {
+            if (playerReady && player && typeof player.playVideo === 'function') {
+                player.playVideo();
+            } else {
+                setTimeout(() => {
+                    if(player && typeof player.playVideo === 'function') player.playVideo();
+                }, 300);
+            }
+
+            document.getElementById('intro').style.display = 'none';
+            const lyricsBox = document.getElementById('lyricsBox');
+            lyricsBox.style.display = 'flex';
+            
+            setInterval(createHeart, 4000);
+            setInterval(createComet, 5000);
+            createComet();
+
+            const textElement = document.getElementById('lyricText');
+            let currentLineIndex = -1;
+
+            setInterval(() => {
+                if (player && typeof player.getCurrentTime === 'function') {
+                    const currentTime = player.getCurrentTime();
+                    
+                    let activeIndex = -1;
+                    for (let i = 0; i < lyricsTimeline.length; i++) {
+                        if (currentTime >= lyricsTimeline[i].time) {
+                            activeIndex = i;
+                        }
+                    }
+
+                    if (activeIndex !== currentLineIndex && activeIndex !== -1) {
+                        currentLineIndex = activeIndex;
+                        
+                        textElement.classList.remove('active');
+                        
+                        setTimeout(() => {
+                            const currentLine = lyricsTimeline[activeIndex];
+                            textElement.innerHTML = currentLine.text;
+                            
+                            textElement.className = 'lyric-line'; 
+                            textElement.classList.add(currentLine.font || 'font-default');
+                            
+                            textElement.classList.add('active');
+
+                            if (currentLine.hearts) {
+                                // Pequeña pausa para asegurar que el DOM calculó el nuevo tamaño en móvil
+                                setTimeout(() => {
+                                    createHeartFromWord(textElement);
+                                }, 50);
+                            }
+                        }, 200);
+                    }
+                }
+            }, 250);
+        }
+    </script>
+</body>
+</html>
